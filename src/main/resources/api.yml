@@ -1,0 +1,160 @@
+swagger: '2.0'
+info:
+  title: RestSwaggerApi
+  description: service
+  version: "1.0.0"
+# array of all schemes that your API supports
+schemes:
+  - http
+# will be prefixed to all paths
+host: localhost:8090
+basePath: /api
+produces:
+  - application/json
+
+definitions:
+  ErrorMessage:
+    type: object
+    properties:
+      timestamp:
+        type: integer
+        format: int64
+      status:
+        type: integer
+        format: int32
+      type:
+        type: string
+      errorMessage:
+        type: string
+  TestDTO:
+    type: object
+    properties:
+      testId:
+        type: integer
+        format: int64
+      name:
+        type: string
+      currentDate:
+        type: string
+        format: date
+      currentDateTime:
+        type: string
+        format: date-time
+      isIdOdd:
+        type: boolean
+  TestCreateDTO:
+    title: TestCreate
+    type: object
+    required:
+      - name
+    properties:
+      name:
+        type: string
+  TestUpdateDTO:
+    title: TestUpdate
+    type: object
+    required:
+      - name
+    properties:
+      name:
+        type: string
+
+parameters:
+  testId:
+    in: path
+    name: testId
+    type: integer
+    format: int64
+    required: true
+
+paths:
+  /tests:
+    get:
+      summary: Tests List
+      operationId: getAll
+      tags:
+        - Tests
+      responses:
+        200:
+          description: An array of tests
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/TestDTO'
+        default:
+          description: Error
+          schema:
+            $ref: '#/definitions/ErrorMessage'
+    post:
+      summary: Create Test
+      operationId: create
+      consumes:
+        - application/json
+      parameters:
+        - name: createTest
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/TestCreateDTO'
+      tags:
+        - Tests
+      responses:
+        200:
+          description: Created Test object
+          schema:
+            $ref: '#/definitions/TestDTO'
+        default:
+          description: Error
+          schema:
+            $ref: '#/definitions/ErrorMessage'
+  /tests/{testId}:
+    get:
+      summary: Get Test object
+      operationId: get
+      parameters:
+        - $ref: '#/parameters/testId'
+      tags:
+        - Tests
+      responses:
+        200:
+          description: Test object
+          schema:
+            $ref: '#/definitions/TestDTO'
+        default:
+          description: Error
+          schema:
+            $ref: '#/definitions/ErrorMessage'
+    put:
+      summary: Update Test object
+      operationId: update
+      tags:
+        - Tests
+      consumes:
+        - application/json
+      parameters:
+        - $ref: '#/parameters/testId'
+        - name: testUpdate
+          in: body
+          schema:
+            $ref: '#/definitions/TestUpdateDTO'
+      responses:
+        200:
+          description: Updated Test object
+          schema:
+            $ref: '#/definitions/TestDTO'
+        default:
+          description: Error
+          schema:
+            $ref: '#/definitions/ErrorMessage'
+    delete:
+      summary: Delete Test object
+      operationId: delete
+      tags:
+        - Tests
+      consumes:
+        - application/json
+      parameters:
+        - $ref: '#/parameters/testId'
+      responses:
+        200:
+          description: Test object deleted, empty response
